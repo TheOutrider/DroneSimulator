@@ -11,16 +11,17 @@ public class DroneController : MonoBehaviour
     liftAmount = 25f,
     maxLift = 100f,
     maxThrottle = 35f,
-    bulletFireRate = 0.075f, throttle = 0.1f, maxThrust = 200f;
+    bulletFireRate = 0.075f, throttle = 0.1f, maxThrust = 200f, health = 200f;
 
 
     public float lift, roll, pitch, yaw, lastLiftValue, throttleIncrement = 0.1f;
-    private bool isFiringBullet = false, cameraSwap = false, isAccelerating = false;
+    private bool isFiringBullet = false, cameraSwap = false, isAccelerating = false, isDead = false;
 
     [Header("Prefabs & Particles")]
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameObject[] turrets;
     [SerializeField] private ParticleSystem[] thrusters, muzzleFlash;
+    [SerializeField] private ParticleSystem damageBlast;
 
     [Header("Drone Audios")]
     [SerializeField] private AudioSource droneAudioSource;
@@ -44,6 +45,8 @@ public class DroneController : MonoBehaviour
     {
         HandleInputs();
         HandleTurret();
+        HandleHealth();
+        CheckMaxHeight();
         HandleCameraPOV();
     }
 
@@ -152,5 +155,53 @@ public class DroneController : MonoBehaviour
         {
             lift = 0;
         }
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        Debug.Log("COLLIDED WITH : " + other.gameObject.tag);
+    }
+
+    private void HandleHealth()
+    {
+        if (health <= 0 && !isDead)
+        {
+            isDead = true;
+            MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+            if (meshRenderer != null)
+            {
+                meshRenderer.enabled = false;
+            }
+            damageBlast.gameObject.SetActive(true);
+            damageBlast.Play();
+            // MusicManager.Instance.PlayBlast();
+            StartCoroutine(StopBlast());
+        }
+    }
+
+    IEnumerator StopBlast()
+    {
+        yield return new WaitForSeconds(1.5f);
+        damageBlast.gameObject.SetActive(false);
+        damageBlast.Stop();
+        yield return new WaitForSeconds(1);
+        RespawnDrone();
+    }
+
+    private void RespawnDrone()
+    {
+        isDead = false;
+        health = 200;
+        MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+
+        if (meshRenderer != null)
+        {
+            meshRenderer.enabled = true;
+        }
+    }
+
+    private void CheckMaxHeight()
+    {
+
     }
 }
