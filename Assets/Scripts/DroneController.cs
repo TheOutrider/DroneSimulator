@@ -6,8 +6,15 @@ public class DroneController : MonoBehaviour
     private Rigidbody rb;
 
     [Header("Stats")]
-    [SerializeField] private float responsiveness = 500f, throttleAmount = 25f, maxThrottle = 100f, bulletFireRate = 0.075f;
-    public float throttle, roll, pitch, yaw;
+    [SerializeField]
+    private float responsiveness = 500f,
+    liftAmount = 25f,
+    maxLift = 100f,
+    maxThrottle = 35f,
+    bulletFireRate = 0.075f, throttle = 0.1f, maxThrust = 200f;
+
+
+    public float lift, roll, pitch, yaw, lastLiftValue, throttleIncrement = 0.1f;
     private bool isFiringBullet = false, cameraSwap = false, isAccelerating = false;
 
     [Header("Prefabs & Particles")]
@@ -52,7 +59,7 @@ public class DroneController : MonoBehaviour
 
     private void HandleTurret()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse2))
         {
             isFiringBullet = true;
             droneAudioSource.clip = turret;
@@ -64,7 +71,7 @@ public class DroneController : MonoBehaviour
             StartCoroutine(FireBullets());
 
         }
-        else if (Input.GetKeyUp(KeyCode.Mouse0))
+        else if (Input.GetKeyUp(KeyCode.Mouse2))
         {
             isFiringBullet = false;
             foreach (var flash in muzzleFlash)
@@ -89,7 +96,12 @@ public class DroneController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.AddForce(transform.up * throttle, ForceMode.Impulse);
+        if (!isAccelerating)
+        {
+            rb.AddForce(Vector3.up * (rb.mass * Physics.gravity.magnitude));
+        }
+        rb.AddForce(maxThrust * throttle * transform.forward);
+        rb.AddForce(transform.up * lift, ForceMode.Impulse);
         rb.AddTorque(transform.right * pitch * responsiveness);
         rb.AddTorque(transform.forward * -roll * responsiveness);
         rb.AddTorque(transform.up * yaw * responsiveness);
@@ -103,34 +115,42 @@ public class DroneController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space))
         {
+            lift = lastLiftValue;
             isAccelerating = true;
-            throttle += Time.deltaTime * throttleAmount;
-            Debug.Log("ACC ++++");
+            lift += Time.deltaTime * liftAmount;
+            lastLiftValue = lift;
             StartCoroutine(Deccelerate());
         }
         else if (Input.GetKeyUp(KeyCode.Space))
         {
-            Debug.Log("ACCELRATOR RELEASED");
             isAccelerating = false;
         }
 
         else if (Input.GetKey(KeyCode.LeftShift))
         {
-            throttle -= Time.deltaTime * throttleAmount;
+            isAccelerating = true;
+            lift -= Time.deltaTime * liftAmount;
+            StartCoroutine(Deccelerate());
         }
 
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            isAccelerating = false;
+        }
+
+        if (Input.GetKey(KeyCode.Mouse0)) throttle += throttleIncrement;
+        else if (Input.GetKey(KeyCode.Mouse1)) throttle -= throttleIncrement * 2;
+
+        lift = Mathf.Clamp(lift, 0, maxLift);
         throttle = Mathf.Clamp(throttle, 0, maxThrottle);
     }
 
     IEnumerator Deccelerate()
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
         if (!isAccelerating)
         {
-            Debug.Log("SHOULD DCELRATOR NOW");
-            throttle -= Time.deltaTime * throttleAmount * 0.5f;
+            lift = 0;
         }
-
     }
-
 }

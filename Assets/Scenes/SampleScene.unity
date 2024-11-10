@@ -523,8 +523,44 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -3227682662074650661, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+      propertyPath: m_Size.y
+      value: 2.2
+      objectReference: {fileID: 0}
+    - target: {fileID: -1979021658505898572, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+      propertyPath: m_Drag
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -1979021658505898572, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+      propertyPath: m_AngularDrag
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2256069517797456178, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+      propertyPath: maxLift
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 2256069517797456178, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2256069517797456178, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+      propertyPath: liftAmount
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2256069517797456178, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+      propertyPath: maxThrottle
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 2256069517797456178, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+      propertyPath: throttleIncrement
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 5730367787436665786, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
       propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767946802880102289, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8725757352335156398, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
@@ -537,7 +573,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8725757352335587470, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.3
+      value: 16.63
       objectReference: {fileID: 0}
     - target: {fileID: 8725757352335587470, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -584,14 +620,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 223677512}
     m_Modifications:
-    - target: {fileID: 6839816286425532058, guid: 13608d92c181f66419740fa013cc0339, type: 3}
-      propertyPath: sightRange
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 6839816286425532058, guid: 13608d92c181f66419740fa013cc0339, type: 3}
-      propertyPath: bulletFireRate
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7220723356121380363, guid: 13608d92c181f66419740fa013cc0339, type: 3}
       propertyPath: m_LocalPosition.x
       value: 16.312256
