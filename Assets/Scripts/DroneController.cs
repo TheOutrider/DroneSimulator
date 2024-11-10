@@ -1,26 +1,91 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DroneController : MonoBehaviour
 {
-
     private Rigidbody rb;
-    [SerializeField] private float responsiveness = 500f, throttleAmount = 25f, maxThrottle = 100f;
 
+    [Header("Stats")]
+    [SerializeField] private float responsiveness = 500f, throttleAmount = 25f, maxThrottle = 100f, bulletFireRate = 0.075f;
     public float throttle, roll, pitch, yaw;
+    private bool isFiringBullet = false, cameraSwap = false, isAccelerating = false;
+
+    [Header("Prefabs & Particles")]
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private GameObject[] turrets;
+    [SerializeField] private ParticleSystem[] thrusters, muzzleFlash;
+
+    [Header("Drone Audios")]
+    [SerializeField] private AudioSource droneAudioSource;
+    [SerializeField] private AudioClip turret;
+
+    [Header("Camera POVs")]
+    [SerializeField]
+    private GameObject FPC, TPC;
+
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        foreach (var flash in muzzleFlash)
+        {
+            flash.Stop();
+        }
     }
 
     private void Update()
     {
         HandleInputs();
+        HandleTurret();
+        HandleCameraPOV();
     }
 
-//https://github.com/alvgaona/unity-drone-controller/blob/main/drone_controller/Assets/F450_Controller/Code/Physics/BaseRigidBody.cs
+    private void HandleCameraPOV()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            cameraSwap = !cameraSwap;
+            FPC.SetActive(cameraSwap);
+            TPC.SetActive(!cameraSwap);
+        }
+    }
+
+    private void HandleTurret()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            isFiringBullet = true;
+            droneAudioSource.clip = turret;
+            droneAudioSource.Play();
+            foreach (var flash in muzzleFlash)
+            {
+                flash.Play();
+            }
+            StartCoroutine(FireBullets());
+
+        }
+        else if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            isFiringBullet = false;
+            foreach (var flash in muzzleFlash)
+            {
+                flash.Stop();
+            }
+            droneAudioSource.Stop();
+        }
+    }
+
+    private IEnumerator FireBullets()
+    {
+        while (isFiringBullet)
+        {
+            foreach (var turret in turrets)
+            {
+                GameObject bullet = Instantiate(bulletPrefab, turret.transform.position, turret.transform.rotation);
+            }
+            yield return new WaitForSeconds(bulletFireRate);
+        }
+    }
 
     private void FixedUpdate()
     {
@@ -36,162 +101,36 @@ public class DroneController : MonoBehaviour
         pitch = Input.GetAxis("Pitch");
         yaw = Input.GetAxis("Yaw");
 
-        if (Input.GetKey(KeyCode.Space) )
+        if (Input.GetKey(KeyCode.Space))
         {
+            isAccelerating = true;
             throttle += Time.deltaTime * throttleAmount;
+            Debug.Log("ACC ++++");
+            StartCoroutine(Deccelerate());
         }
+        else if (Input.GetKeyUp(KeyCode.Space))
+        {
+            Debug.Log("ACCELRATOR RELEASED");
+            isAccelerating = false;
+        }
+
         else if (Input.GetKey(KeyCode.LeftShift))
         {
             throttle -= Time.deltaTime * throttleAmount;
         }
 
-        throttle = Mathf.Clamp(throttle, 0, maxThrottle)   ;
+        throttle = Mathf.Clamp(throttle, 0, maxThrottle);
     }
 
+    IEnumerator Deccelerate()
+    {
+        yield return new WaitForSeconds(2);
+        if (!isAccelerating)
+        {
+            Debug.Log("SHOULD DCELRATOR NOW");
+            throttle -= Time.deltaTime * throttleAmount * 0.5f;
+        }
 
-    // public float moveSpeed = 5f;   // Speed of movement
-    // public float rotateSpeed = 50f; // Speed of rotation
-    // public float liftSpeed = 3f;    // Speed for up/down movement
+    }
 
-    // private float upDownAxis, forwardBackwardAxis, leftRightAxis;
-    // private float forwardBackwardAngle = 0, leftRightAngle = 0;
-
-    // [SerializeField]
-    // private float speed = 1.3f, angle = 25;
-
-    // bool isGrounded = false;
-
-    // private Rigidbody rb;
-
-    // void Start()
-    // {
-    //     rb = GetComponent<Rigidbody>();
-    // }
-
-    // private void HandleControls()
-    // {
-
-    //     //FOR LIFT
-    //     if (Input.GetKey(KeyCode.Space))
-    //     {
-    //         upDownAxis = 10 * speed;
-    //         isGrounded = false;
-    //     }
-    //     else if (Input.GetKeyDown(KeyCode.LeftControl))
-    //     {
-    //         upDownAxis = 8;
-    //     }
-    //     else
-    //     {
-    //         upDownAxis = 9.8f;
-    //     }
-
-    //     //FOR FOWARD AND BACKWWARD MOVEMENT
-
-    //     if (Input.GetKey(KeyCode.W))
-    //     {
-    //         forwardBackwardAngle = Mathf.Lerp(forwardBackwardAngle, angle, Time.deltaTime);
-    //         forwardBackwardAxis = speed;
-    //     }
-    //     else if (Input.GetKey(KeyCode.S))
-    //     {
-    //         forwardBackwardAngle = Mathf.Lerp(forwardBackwardAngle, -angle, Time.deltaTime);
-    //         forwardBackwardAxis = -speed;
-    //     }
-    //     else
-    //     {
-    //         forwardBackwardAngle = Mathf.Lerp(forwardBackwardAngle, 0, Time.deltaTime);
-    //         forwardBackwardAxis = 0;
-    //     }
-
-    //     //FOR LEFT AND RIGHT MOVEMENT
-
-    //     if (Input.GetKey(KeyCode.D))
-    //     {
-    //         leftRightAngle = Mathf.Lerp(leftRightAngle, angle, Time.deltaTime);
-    //         leftRightAxis = speed;
-    //     }
-    //     else if (Input.GetKey(KeyCode.D))
-    //     {
-    //         leftRightAngle = Mathf.Lerp(leftRightAngle, -angle, Time.deltaTime);
-    //         leftRightAxis = -speed;
-    //     }
-    //     else
-    //     {
-    //         leftRightAngle = Mathf.Lerp(leftRightAngle, 0, Time.deltaTime);
-    //         leftRightAxis = 0;
-    //     }
-
-    //     //FOR DYNAMIC MOVEMENT
-    //     if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
-    //     {
-    //         forwardBackwardAngle = Mathf.Lerp(forwardBackwardAngle, angle, Time.deltaTime);
-    //         leftRightAngle = Mathf.Lerp(leftRightAngle, angle, Time.deltaTime);
-    //         forwardBackwardAxis = 0.5f * speed;
-    //         leftRightAxis = 0.5f * speed;
-    //     }
-
-    //     if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
-    //     {
-    //         forwardBackwardAngle = Mathf.Lerp(forwardBackwardAngle, angle, Time.deltaTime);
-    //         leftRightAngle = Mathf.Lerp(leftRightAngle, -angle, Time.deltaTime);
-    //         forwardBackwardAxis = 0.5f * speed;
-    //         leftRightAxis = -0.5f * speed;
-    //     }
-
-    //     if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D))
-    //     {
-    //         forwardBackwardAngle = Mathf.Lerp(forwardBackwardAngle, -angle, Time.deltaTime);
-    //         leftRightAngle = Mathf.Lerp(leftRightAngle, angle, Time.deltaTime);
-    //         forwardBackwardAxis = -0.5f * speed;
-    //         leftRightAxis = 0.5f * speed;
-    //     }
-
-    //     if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A))
-    //     {
-    //         forwardBackwardAngle = Mathf.Lerp(forwardBackwardAngle, -angle, Time.deltaTime);
-    //         leftRightAngle = Mathf.Lerp(leftRightAngle, -angle, Time.deltaTime);
-    //         forwardBackwardAxis = -0.5f * speed;
-    //         leftRightAxis = -0.5f * speed;
-    //     }
-
-    // }
-
-    // void Update()
-    // {
-
-    //     HandleControls();
-    //     transform.localEulerAngles = Vector3.back * leftRightAngle + Vector3.right * forwardBackwardAngle;
-
-    //     // // Move the drone forward/backward
-    //     // float moveForwardBackward = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
-    //     // // Move the drone left/right
-    //     // float moveLeftRight = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
-    //     // // Lift the drone up/down
-    //     // float moveUpDown = 0f;
-    //     // if (Input.GetKey(KeyCode.Space)) // Move up when Space key is held
-    //     // {
-    //     //     moveUpDown = liftSpeed * Time.deltaTime;
-    //     // }
-    //     // if (Input.GetKey(KeyCode.LeftControl)) // Move down when LeftControl key is held
-    //     // {
-    //     //     moveUpDown = -liftSpeed * Time.deltaTime;
-    //     // }
-
-    //     // // Rotate the drone
-    //     // float yaw = Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime; // Rotate based on mouse movement (for yaw)
-    //     // float pitch = Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime; // Rotate based on mouse movement (for pitch)
-
-    //     // // Apply movement
-    //     // rb.MovePosition(transform.position + transform.forward * moveForwardBackward + transform.right * moveLeftRight + transform.up * moveUpDown);
-
-    //     // // Apply rotation
-    //     // transform.Rotate(Vector3.up, yaw);
-    //     // transform.Rotate(Vector3.left, pitch);
-    // }
-
-    // private void FixedUpdate()
-    // {
-    //     rb.AddRelativeForce(leftRightAxis, upDownAxis, forwardBackwardAxis);
-    // }
 }
