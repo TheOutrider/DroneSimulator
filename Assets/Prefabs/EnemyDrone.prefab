@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 2772391933850830823}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.795, y: 1.663, z: 0.85}
+  m_LocalPosition: {x: -0.08, y: 0.827, z: 2.563}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -209,7 +209,7 @@ MonoBehaviour:
   bulletFireRate: 1
   fireRate: 1
   fireRateTimer: 0
-  bulletPrefab: {fileID: 2019565668066049164, guid: 47bd97bd6969a5e4692a0d22114299db, type: 3}
+  bulletPrefab: {fileID: 2019565668066049164, guid: ce505f01f2e1f75408dff69d40caabb3, type: 3}
   turrets:
   - {fileID: 2772391933850830823}
   - {fileID: 3931264527387500122}
@@ -236,7 +236,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2, y: 1.75, z: 3}
+  m_Size: {x: 3, y: 2, z: 3}
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!1001 &8031833000216147612
 PrefabInstance:

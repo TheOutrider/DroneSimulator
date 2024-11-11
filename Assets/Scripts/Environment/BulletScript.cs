@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BulletScript : MonoBehaviour
@@ -14,7 +12,6 @@ public class BulletScript : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        // rb.velocity = rb.transform.forward * shootForce;
         rb.velocity = GetDirection() * shootForce;
         Destroy(gameObject, life);
     }
@@ -25,13 +22,10 @@ public class BulletScript : MonoBehaviour
         DeactivateObjects();
     }
 
-
     private void DeactivateObjects()
     {
         rb.velocity = Vector3.zero;
-
         Destroy(gameObject);
-
     }
 
     private Vector3 GetDirection()
@@ -48,7 +42,6 @@ public class BulletScript : MonoBehaviour
 
             direction.Normalize();
         }
-
         return direction;
     }
 }

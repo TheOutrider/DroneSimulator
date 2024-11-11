@@ -1,17 +1,18 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DroneController : MonoBehaviour
 {
     private Rigidbody rb;
 
-    [Header("Stats")]
+    // [Header("Stats")]
     [SerializeField]
     private float responsiveness = 500f,
     liftAmount = 25f,
     maxLift = 100f,
     maxThrottle = 35f,
-    bulletFireRate = 0.075f, throttle = 0.1f, maxThrust = 200f, health = 200f;
+    bulletFireRate = 0.075f, throttle = 0.1f, maxThrust = 200f, health = 200f, maxReachableHeight = 65;
 
 
     public float lift, roll, pitch, yaw, lastLiftValue, throttleIncrement = 0.1f;
@@ -25,11 +26,16 @@ public class DroneController : MonoBehaviour
 
     [Header("Drone Audios")]
     [SerializeField] private AudioSource droneAudioSource;
-    [SerializeField] private AudioClip turret;
+    [SerializeField] private AudioClip turret, blast;
 
     [Header("Camera POVs")]
     [SerializeField]
     private GameObject FPC, TPC;
+
+    [Header("Canvas")]
+    [SerializeField] private Slider slider;
+
+    public Transform respawnLocation;
 
 
     private void Awake()
@@ -46,7 +52,6 @@ public class DroneController : MonoBehaviour
         HandleInputs();
         HandleTurret();
         HandleHealth();
-        CheckMaxHeight();
         HandleCameraPOV();
     }
 
@@ -102,6 +107,10 @@ public class DroneController : MonoBehaviour
         if (!isAccelerating)
         {
             rb.AddForce(Vector3.up * (rb.mass * Physics.gravity.magnitude));
+        }
+        if (rb.position.y > maxReachableHeight && rb.velocity.y > 0)
+        {
+            rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         }
         rb.AddForce(maxThrust * throttle * transform.forward);
         rb.AddForce(transform.up * lift, ForceMode.Impulse);
@@ -159,13 +168,17 @@ public class DroneController : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        Debug.Log("COLLIDED WITH : " + other.gameObject.tag);
+        if (other.gameObject.tag == "EnemyBullet")
+        {
+            health -= 10;
+        }
     }
 
     private void HandleHealth()
     {
         if (health <= 0 && !isDead)
         {
+            droneAudioSource.PlayOneShot(blast);
             isDead = true;
             MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
             if (meshRenderer != null)
@@ -190,6 +203,10 @@ public class DroneController : MonoBehaviour
 
     private void RespawnDrone()
     {
+        transform.position = respawnLocation.transform.position;
+        transform.rotation = respawnLocation.rotation;
+
+
         isDead = false;
         health = 200;
         MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
@@ -200,8 +217,15 @@ public class DroneController : MonoBehaviour
         }
     }
 
-    private void CheckMaxHeight()
+    private void OnTriggerEnter(Collider other)
     {
-
+        if (other.gameObject.tag == "HealthBar")
+        {
+            health += 75;
+            if (health > 200f)
+            {
+                health = 200f;
+            }
+        }
     }
 }

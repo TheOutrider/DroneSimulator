@@ -8,8 +8,10 @@ public class EnemyScript : MonoBehaviour
     private float health = 100f, amplitude = 0.5f, frequency = 1f, sightRange = 100f, bulletFireRate = 1, fireRate = 1, fireRateTimer;
     private Vector3 startPosition;
     [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private GameObject[] turrets;
+    [SerializeField] private GameObject[] turrets, bodyParts;
     [SerializeField] private ParticleSystem damageBlast;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip bulletSound, blastSound;
 
     private bool playerInAttackRange, isDead = false;
 
@@ -25,7 +27,7 @@ public class EnemyScript : MonoBehaviour
 
     bool IsObjectInRange()
     {
-        if (playerDrone == null) return false; // Ensure targetObject is assigned
+        if (playerDrone == null) return false;
         float distance = Vector3.Distance(transform.position, playerDrone.transform.position);
         return distance <= sightRange;
     }
@@ -37,7 +39,6 @@ public class EnemyScript : MonoBehaviour
 
         if (playerInAttackRange)
         {
-            // StartCoroutine(FireBullets());
             if (ShouldFire()) Fire();
         }
 
@@ -54,6 +55,7 @@ public class EnemyScript : MonoBehaviour
 
     public bool ShouldFire()
     {
+        audioSource.PlayOneShot(bulletSound);
         fireRateTimer += Time.deltaTime;
         if (fireRateTimer < fireRate)
             return false;
@@ -70,26 +72,32 @@ public class EnemyScript : MonoBehaviour
             {
                 GameObject bullet = Instantiate(bulletPrefab, turret.transform.position, turret.transform.rotation);
             }
-
         }
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        Debug.Log("ENEMY BULLET HIT : " + other.gameObject.tag);
-        health -= 10;
+        if (other.gameObject.tag == "Bullet")
+        {
+            health -= 10;
+        }
     }
 
     private void HandleHealth()
     {
         if (health <= 0 && !isDead)
         {
+            audioSource.PlayOneShot(blastSound);
             isDead = true;
-            MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
-            if (meshRenderer != null)
+            foreach (GameObject parts in bodyParts)
             {
-                meshRenderer.enabled = false;
+                parts.gameObject.SetActive(false);
             }
+            // MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+            // if (meshRenderer != null)
+            // {
+            //     meshRenderer.enabled = false;
+            // }
             damageBlast.gameObject.SetActive(true);
             damageBlast.Play();
             // MusicManager.Instance.PlayBlast();
