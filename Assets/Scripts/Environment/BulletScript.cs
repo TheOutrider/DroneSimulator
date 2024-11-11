@@ -16,7 +16,6 @@ public class BulletScript : MonoBehaviour
         Destroy(gameObject, life);
     }
 
-
     private void OnTriggerEnter(Collider other)
     {
         DeactivateObjects();

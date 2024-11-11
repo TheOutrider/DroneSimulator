@@ -185,6 +185,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400006, guid: 90de326af62a75d43bcaff3421969121, type: 3}
   m_PrefabInstance: {fileID: 7220723356121509005}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7220723356121475625 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100004, guid: 90de326af62a75d43bcaff3421969121, type: 3}
+  m_PrefabInstance: {fileID: 7220723356121509005}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7220723356121475627 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100006, guid: 90de326af62a75d43bcaff3421969121, type: 3}
@@ -213,7 +218,14 @@ MonoBehaviour:
   turrets:
   - {fileID: 2772391933850830823}
   - {fileID: 3931264527387500122}
+  bodyParts:
+  - {fileID: 7220723356121475629}
+  - {fileID: 7220723356121475631}
+  - {fileID: 7220723356121475625}
   damageBlast: {fileID: 7905797948260786802}
+  audioSource: {fileID: 0}
+  bulletSound: {fileID: 0}
+  blastSound: {fileID: 0}
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 0
@@ -238,6 +250,16 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3, y: 2, z: 3}
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!1 &7220723356121475629 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100000, guid: 90de326af62a75d43bcaff3421969121, type: 3}
+  m_PrefabInstance: {fileID: 7220723356121509005}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7220723356121475631 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100002, guid: 90de326af62a75d43bcaff3421969121, type: 3}
+  m_PrefabInstance: {fileID: 7220723356121509005}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8031833000216147612
 PrefabInstance:
   m_ObjectHideFlags: 0

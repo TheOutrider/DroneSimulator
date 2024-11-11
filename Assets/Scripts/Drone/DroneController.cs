@@ -12,11 +12,11 @@ public class DroneController : MonoBehaviour
     liftAmount = 25f,
     maxLift = 100f,
     maxThrottle = 35f,
-    bulletFireRate = 0.075f, throttle = 0.1f, maxThrust = 200f, health = 200f, maxReachableHeight = 65;
+    bulletFireRate = 0.075f, throttle = 0.1f, maxThrust = 200f, maxReachableHeight = 65;
 
 
-    public float lift, roll, pitch, yaw, lastLiftValue, throttleIncrement = 0.1f;
-    private bool isFiringBullet = false, cameraSwap = false, isAccelerating = false, isDead = false;
+    public float lift, roll, pitch, yaw, lastLiftValue, throttleIncrement = 0.1f, health = 200f;
+    private bool isFiringBullet = false, isAccelerating = false, isDead = false;
 
     [Header("Prefabs & Particles")]
     [SerializeField] private GameObject bulletPrefab;
@@ -28,9 +28,7 @@ public class DroneController : MonoBehaviour
     [SerializeField] private AudioSource droneAudioSource;
     [SerializeField] private AudioClip turret, blast;
 
-    [Header("Camera POVs")]
-    [SerializeField]
-    private GameObject FPC, TPC;
+
 
     [Header("Canvas")]
     [SerializeField] private Slider slider;
@@ -52,17 +50,6 @@ public class DroneController : MonoBehaviour
         HandleInputs();
         HandleTurret();
         HandleHealth();
-        HandleCameraPOV();
-    }
-
-    private void HandleCameraPOV()
-    {
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            cameraSwap = !cameraSwap;
-            FPC.SetActive(cameraSwap);
-            TPC.SetActive(!cameraSwap);
-        }
     }
 
     private void HandleTurret()
@@ -187,7 +174,6 @@ public class DroneController : MonoBehaviour
             }
             damageBlast.gameObject.SetActive(true);
             damageBlast.Play();
-            // MusicManager.Instance.PlayBlast();
             StartCoroutine(StopBlast());
         }
     }
@@ -203,9 +189,9 @@ public class DroneController : MonoBehaviour
 
     private void RespawnDrone()
     {
+        lift = 0; roll = 0; pitch = 0; yaw = 0;
         transform.position = respawnLocation.transform.position;
         transform.rotation = respawnLocation.rotation;
-
 
         isDead = false;
         health = 200;

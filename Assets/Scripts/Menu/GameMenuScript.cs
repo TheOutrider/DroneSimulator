@@ -9,12 +9,31 @@ public class GameMenuScript : MonoBehaviour
     private TextMeshProUGUI buttonText;
     [SerializeField] private AudioSource audioSource;
     private bool hasGameStarted = false;
+    [SerializeField] private GameObject gameCanvas;
 
     void Start()
     {
         startButton.onClick.AddListener(OnStartPressed);
         buttonText = startButton.GetComponentInChildren<TextMeshProUGUI>();
+    }
 
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            gameCanvas.SetActive(true);
+        }
+    }
+
+    public void OnClosePressed()
+    {
+        PlayClickSound();
+        if (!hasGameStarted)
+        {
+            buttonText.text = "EXIT TO MENU";
+            hasGameStarted = true;
+        }
+        gameCanvas.SetActive(false);
     }
 
     private void OnStartPressed()
@@ -24,6 +43,7 @@ public class GameMenuScript : MonoBehaviour
         {
             buttonText.text = "EXIT TO MENU";
             hasGameStarted = true;
+            gameCanvas.SetActive(false);
         }
         else
         {
