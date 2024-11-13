@@ -8,6 +8,8 @@ TagManager:
   - Bullet
   - EnemyBullet
   - HealthBar
+  - GunAmmo
+  - Fireball
   layers:
   - Default
   - TransparentFX

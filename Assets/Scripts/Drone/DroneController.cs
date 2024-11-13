@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,7 +7,6 @@ public class DroneController : MonoBehaviour
 {
     private Rigidbody rb;
 
-    // [Header("Stats")]
     [SerializeField]
     private float responsiveness = 500f,
     liftAmount = 25f,
@@ -28,12 +28,9 @@ public class DroneController : MonoBehaviour
     [SerializeField] private AudioSource droneAudioSource;
     [SerializeField] private AudioClip turret, blast;
 
-
-
-    [Header("Canvas")]
-    [SerializeField] private Slider slider;
-
     public Transform respawnLocation;
+
+    public static event Action OnLauncherAcquired, OnGunFired, OnLauncherFired;
 
 
     private void Awake()
@@ -83,6 +80,7 @@ public class DroneController : MonoBehaviour
         {
             foreach (var turret in turrets)
             {
+                OnGunFired?.Invoke();
                 GameObject bullet = Instantiate(bulletPrefab, turret.transform.position, turret.transform.rotation);
             }
             yield return new WaitForSeconds(bulletFireRate);
@@ -157,6 +155,7 @@ public class DroneController : MonoBehaviour
     {
         if (other.gameObject.tag == "EnemyBullet")
         {
+            Debug.Log("BULLET COLLISION ENTERED");
             health -= 10;
         }
     }
@@ -205,6 +204,7 @@ public class DroneController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("TRIGGER ENTERED : " + other.gameObject.tag);
         if (other.gameObject.tag == "HealthBar")
         {
             health += 75;
@@ -212,6 +212,11 @@ public class DroneController : MonoBehaviour
             {
                 health = 200f;
             }
+        }
+
+        else if (other.gameObject.tag == "FireballWeapon")
+        {
+            OnLauncherAcquired?.Invoke();
         }
     }
 }

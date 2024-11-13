@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,9 +13,7 @@ public class DroneUI : MonoBehaviour
     [SerializeField]
     private GameObject FPC, TPC, FPCanvas, TPCanvas;
 
-
-
-    private bool cameraSwap = false;
+    private bool cameraSwap = false, hasLauncherAcquired = false;
 
     private void Start()
     {
@@ -23,7 +22,12 @@ public class DroneUI : MonoBehaviour
         {
             droneController = drone.gameObject.GetComponent<DroneController>();
         }
+        DroneController.OnLauncherAcquired += OnLauncherAcquired;
+    }
 
+    private void OnLauncherAcquired()
+    {
+        hasLauncherAcquired = true;
     }
 
     private void Update()

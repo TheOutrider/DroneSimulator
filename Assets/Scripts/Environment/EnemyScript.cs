@@ -55,7 +55,7 @@ public class EnemyScript : MonoBehaviour
 
     public bool ShouldFire()
     {
-        audioSource.PlayOneShot(bulletSound);
+
         fireRateTimer += Time.deltaTime;
         if (fireRateTimer < fireRate)
             return false;
@@ -66,6 +66,7 @@ public class EnemyScript : MonoBehaviour
     public void Fire()
     {
         fireRateTimer = 0;
+        audioSource.PlayOneShot(bulletSound);
         foreach (var turret in turrets)
         {
             if (!isDead)
