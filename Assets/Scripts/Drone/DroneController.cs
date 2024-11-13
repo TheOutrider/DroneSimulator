@@ -11,11 +11,9 @@ public class DroneController : MonoBehaviour
     private float responsiveness = 500f,
     liftAmount = 25f,
     maxLift = 100f,
-    maxThrottle = 35f,
-    bulletFireRate = 0.075f, throttle = 0.1f, maxThrust = 200f, maxReachableHeight = 65;
+    bulletFireRate = 0.075f, maxThrust = 200f, maxReachableHeight = 65;
 
-
-    public float lift, roll, pitch, yaw, lastLiftValue, throttleIncrement = 0.1f, health = 200f;
+    public float lift, roll, pitch, yaw, lastLiftValue, throttleIncrement = 0.1f, health = 200f, maxThrottle = 35f, throttle = 0.1f;
     private bool isFiringBullet = false, isAccelerating = false, isDead = false;
 
     [Header("Prefabs & Particles")]
@@ -26,11 +24,11 @@ public class DroneController : MonoBehaviour
 
     [Header("Drone Audios")]
     [SerializeField] private AudioSource droneAudioSource;
-    [SerializeField] private AudioClip turret, blast;
+    [SerializeField] private AudioClip blast;
 
     public Transform respawnLocation;
 
-    public static event Action OnLauncherAcquired, OnGunFired, OnLauncherFired;
+    public static event Action  OnGunAmmoAcquired, OnFireballAmmoAcquired, OnGunFired, OnFireballFired;
 
 
     private void Awake()
@@ -54,8 +52,8 @@ public class DroneController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse2))
         {
             isFiringBullet = true;
-            droneAudioSource.clip = turret;
-            droneAudioSource.Play();
+            // droneAudioSource.clip = turret;
+            // droneAudioSource.Play();
             foreach (var flash in muzzleFlash)
             {
                 flash.Play();
@@ -81,6 +79,7 @@ public class DroneController : MonoBehaviour
             foreach (var turret in turrets)
             {
                 OnGunFired?.Invoke();
+                 Debug.Log("GUN FIRED INVOKED");
                 GameObject bullet = Instantiate(bulletPrefab, turret.transform.position, turret.transform.rotation);
             }
             yield return new WaitForSeconds(bulletFireRate);
@@ -214,9 +213,14 @@ public class DroneController : MonoBehaviour
             }
         }
 
-        else if (other.gameObject.tag == "FireballWeapon")
+        else if (other.gameObject.tag == "GunAmmo")
         {
-            OnLauncherAcquired?.Invoke();
+            OnGunAmmoAcquired?.Invoke();
+        }
+
+        else if (other.gameObject.tag == "FireballAmmo")
+        {
+            OnFireballAmmoAcquired?.Invoke();
         }
     }
 }

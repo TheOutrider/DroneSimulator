@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthPoint : MonoBehaviour
+public class FireballAmmoScript : MonoBehaviour
 {
     [SerializeField]
     private float amplitude = 0.5f, frequency = 1f, rotateSpeed = 10f;
 
     private Vector3 originalPosition = new Vector3(), tempPosition = new Vector3();
 
-    private bool healthIncreased = false;
+    private bool ammoAcquired;
 
     private AudioSource audioSource;
 
@@ -31,12 +31,12 @@ public class HealthPoint : MonoBehaviour
         transform.Rotate(0f, rotateSpeed * Time.deltaTime, 0f, Space.Self);
     }
 
-    private void OnTriggerEnter(Collider other)
+   private void OnTriggerEnter(Collider other)
     {
         Destroy(body);
-        if (!healthIncreased)
+        if (!ammoAcquired)
         {
-            healthIncreased = true;
+            ammoAcquired = true;
             audioSource.Play();
             Destroy(gameObject, 1f);
         }

@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class DroneUI : MonoBehaviour
 {
-    [SerializeField] private Slider healthBar;
+    [SerializeField] private Slider healthBar, healthBarFP, speedometer, speedometerFP;
+    
     private GameObject drone;
     private DroneController droneController;
 
@@ -22,23 +24,25 @@ public class DroneUI : MonoBehaviour
         {
             droneController = drone.gameObject.GetComponent<DroneController>();
         }
-        DroneController.OnLauncherAcquired += OnLauncherAcquired;
-    }
-
-    private void OnLauncherAcquired()
-    {
-        hasLauncherAcquired = true;
     }
 
     private void Update()
     {
         HandleCameraPOV();
         UpdateHealthBar(droneController.health, 200f);
+        UpdateSpeedometer(droneController.throttle, droneController.maxThrottle);
     }
 
     private void UpdateHealthBar(float currentValue, float maxValue)
     {
         healthBar.value = currentValue / maxValue;
+        healthBarFP.value = currentValue / maxValue;
+    }
+
+    private void UpdateSpeedometer(float currentValue, float maxValue)
+    {
+        speedometer.value = currentValue / maxValue;
+        speedometerFP.value = currentValue / maxValue;
     }
 
     private void HandleCameraPOV()
@@ -52,6 +56,8 @@ public class DroneUI : MonoBehaviour
             TPCanvas.SetActive(!cameraSwap);
         }
     }
+
+
 
 
 }
