@@ -11,14 +11,15 @@ public class DroneController : MonoBehaviour
     private float responsiveness = 500f,
     liftAmount = 25f,
     maxLift = 100f,
-    bulletFireRate = 0.075f, maxThrust = 200f, maxReachableHeight = 65;
+    bulletFireRate = 0.075f, fireballFireRate = 1, maxThrust = 200f, maxReachableHeight = 65;
 
     public float lift, roll, pitch, yaw, lastLiftValue, throttleIncrement = 0.1f, health = 200f, maxThrottle = 35f, throttle = 0.1f;
     private bool isFiringBullet = false, isAccelerating = false, isDead = false, isGunSelected = true;
 
-    [Header("Prefabs & Particles")]
-    [SerializeField] private GameObject bulletPrefab, fireballPrefab;
-    [SerializeField] private GameObject[] turrets;
+    private int currentAmmoCount;
+
+    [SerializeField] private GameObject launchers;
+
     [SerializeField] private ParticleSystem[] thrusters, muzzleFlash;
     [SerializeField] private ParticleSystem damageBlast;
 
@@ -28,7 +29,7 @@ public class DroneController : MonoBehaviour
 
     public Transform respawnLocation;
 
-    public static event Action OnGunAmmoAcquired, OnFireballAmmoAcquired, OnGunFired, OnFireballFired;
+    public static event Action OnGunAmmoAcquired, OnFireballAmmoAcquired, OnGunFired;
     public delegate void OnWeaponChanged(bool selectedGun);
     public static event OnWeaponChanged WeaponChanged;
 
@@ -40,13 +41,23 @@ public class DroneController : MonoBehaviour
         {
             flash.Stop();
         }
+
+        DroneWeapon.RoundsFired += RoundsFired;
+    }
+
+    private void RoundsFired(int ammo)
+    {
+        currentAmmoCount = ammo;
     }
 
     private void Update()
     {
         HandleInputs();
         HandleWeapon();
-        HandleTurret();
+        if (!isDead)
+        {
+            HandleTurret();
+        }
         HandleHealth();
     }
 
@@ -54,13 +65,11 @@ public class DroneController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            Debug.Log("IS GUN SELECTED : ");
             isGunSelected = true;
             WeaponChanged?.Invoke(isGunSelected);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            Debug.Log("IS LAUNCHER SELECTED : ");
             isGunSelected = false;
             WeaponChanged?.Invoke(isGunSelected);
         }
@@ -72,11 +81,10 @@ public class DroneController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse2))
         {
             isFiringBullet = true;
-            // droneAudioSource.clip = turret;
-            // droneAudioSource.Play();
             foreach (var flash in muzzleFlash)
             {
-                flash.Play();
+                if (!isDead && isGunSelected && currentAmmoCount > 0)
+                    flash.Play();
             }
             StartCoroutine(FireBullets());
 
@@ -96,13 +104,8 @@ public class DroneController : MonoBehaviour
     {
         while (isFiringBullet)
         {
-            foreach (var turret in turrets)
-            {
-                OnGunFired?.Invoke();
-                Debug.Log("GUN FIRED INVOKED");
-                GameObject bullet = Instantiate(isGunSelected ? bulletPrefab : fireballPrefab, turret.transform.position, turret.transform.rotation);
-            }
-            yield return new WaitForSeconds(bulletFireRate);
+            OnGunFired?.Invoke();
+            yield return new WaitForSeconds(isGunSelected ? bulletFireRate : fireballFireRate);
         }
     }
 
@@ -174,7 +177,6 @@ public class DroneController : MonoBehaviour
     {
         if (other.gameObject.tag == "EnemyBullet")
         {
-            Debug.Log("BULLET COLLISION ENTERED");
             health -= 10;
         }
     }
@@ -184,6 +186,7 @@ public class DroneController : MonoBehaviour
         if (health <= 0 && !isDead)
         {
             droneAudioSource.PlayOneShot(blast);
+            launchers.SetActive(false);
             isDead = true;
             MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
             if (meshRenderer != null)
@@ -207,14 +210,16 @@ public class DroneController : MonoBehaviour
 
     private void RespawnDrone()
     {
+
         lift = 0; roll = 0; pitch = 0; yaw = 0;
         transform.position = respawnLocation.transform.position;
         transform.rotation = respawnLocation.rotation;
 
+        launchers.SetActive(!isGunSelected);
+
         isDead = false;
         health = 200;
         MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
-
         if (meshRenderer != null)
         {
             meshRenderer.enabled = true;
@@ -223,7 +228,6 @@ public class DroneController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("TRIGGER ENTERED : " + other.gameObject.tag);
         if (other.gameObject.tag == "HealthBar")
         {
             health += 75;

@@ -38,7 +38,7 @@ public class FireballAmmoScript : MonoBehaviour
         {
             ammoAcquired = true;
             audioSource.Play();
-            Destroy(gameObject, 1f);
+            Destroy(gameObject, 0.5f);
         }
 
     }

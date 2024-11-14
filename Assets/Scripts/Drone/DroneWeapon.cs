@@ -7,16 +7,30 @@ public class DroneWeapon : MonoBehaviour
     public int gunAmmo = 100, fireballAmmo = 0;
 
     [SerializeField] private TextMeshProUGUI gunAmmoTextFP, fireballAmmoFP, gunAmmoTextTP, fireballAmmoTP;
-    [SerializeField] private GameObject gunAmmoUI, fireballAmmoUI, gunAmmoUIFP, fireballAmmoUIFP;
+    [SerializeField] private GameObject gunAmmoUI, fireballAmmoUI, gunAmmoUIFP, fireballAmmoUIFP, launchers;
 
     [Header("Drone Audios")]
     [SerializeField] private AudioSource droneAudioSource;
-    [SerializeField] private AudioClip turret, emptyGun;
+    [SerializeField] private AudioClip turret, emptyGun, flame;
+
+    [SerializeField] private GameObject[] turrets;
+    [Header("Prefabs & Particles")]
+    [SerializeField] private GameObject bulletPrefab, fireballPrefab;
+
+    public delegate void OnRoundsFired(int ammo);
+    public static event OnRoundsFired RoundsFired;
+
+
+    private bool isGunSelected = true;
+
+    private void Awake()
+    {
+
+    }
 
     private void Start()
     {
         DroneController.OnGunFired += GunFired;
-        DroneController.OnFireballFired += FireballFired;
         DroneController.OnGunAmmoAcquired += OnGunAmmoAcquired;
         DroneController.OnFireballAmmoAcquired += OnFireballAmmoAcquired;
         DroneController.WeaponChanged += OnWeaponChanged;
@@ -24,6 +38,8 @@ public class DroneWeapon : MonoBehaviour
 
     private void OnWeaponChanged(bool selectedGun)
     {
+        isGunSelected = selectedGun;
+        launchers.SetActive(!isGunSelected);
         gunAmmoUI.gameObject.SetActive(selectedGun);
         fireballAmmoUI.gameObject.SetActive(!selectedGun);
         gunAmmoUIFP.gameObject.SetActive(selectedGun);
@@ -32,30 +48,34 @@ public class DroneWeapon : MonoBehaviour
 
     private void GunFired()
     {
-        Debug.Log("GUN FIRED ");
-        if (gunAmmo > 0)
+        if ((gunAmmo > 0 && isGunSelected) || (fireballAmmo > 0 && !isGunSelected))
         {
-            droneAudioSource.clip = turret;
+            droneAudioSource.clip = isGunSelected ? turret : flame;
             droneAudioSource.Play();
-            gunAmmo -= 1;
-        }
-        else
-        {
-            droneAudioSource.clip = emptyGun;
-            droneAudioSource.Play();
-        }
+            if (isGunSelected)
+            {
+                gunAmmo -= 1;
+            }
+            else
+            {
+                if (!isGunSelected)
+                    fireballAmmo -= 1;
+            }
 
+            foreach (var turret in turrets)
+            {
+                if (isGunSelected && gunAmmo > 0)
+                {
+                    GameObject bullet = Instantiate(bulletPrefab, turret.transform.position, turret.transform.rotation);
+                }
+                else if (!isGunSelected && fireballAmmo > 0)
+                {
+                    GameObject bullet = Instantiate(fireballPrefab, turret.transform.position, turret.transform.rotation);
+                }
 
-    }
+            }
 
-    private void FireballFired()
-    {
-
-        if (fireballAmmo > 0)
-        {
-            droneAudioSource.clip = turret;
-            droneAudioSource.Play();
-            fireballAmmo -= 1;
+            RoundsFired?.Invoke(isGunSelected ? gunAmmo : fireballAmmo);
         }
         else
         {

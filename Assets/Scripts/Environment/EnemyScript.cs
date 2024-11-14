@@ -35,7 +35,6 @@ public class EnemyScript : MonoBehaviour
 
     void Update()
     {
-
         playerInAttackRange = IsObjectInRange();
 
         if (playerInAttackRange)
@@ -66,15 +65,19 @@ public class EnemyScript : MonoBehaviour
 
     public void Fire()
     {
-        fireRateTimer = 0;
-        audioSource.PlayOneShot(bulletSound);
-        foreach (var turret in turrets)
+        if (!isDead)
         {
-            if (!isDead)
+            fireRateTimer = 0;
+            audioSource.PlayOneShot(bulletSound);
+            foreach (var turret in turrets)
             {
-                GameObject bullet = Instantiate(bulletPrefab, turret.transform.position, turret.transform.rotation);
+                if (!isDead)
+                {
+                    GameObject bullet = Instantiate(bulletPrefab, turret.transform.position, turret.transform.rotation);
+                }
             }
         }
+
     }
 
     private void OnCollisionEnter(Collision other)
@@ -112,7 +115,6 @@ public class EnemyScript : MonoBehaviour
         damageBlast.Stop();
         yield return new WaitForSeconds(1);
         gameObject.SetActive(false);
-        // Destroy(gameObject);
     }
 
     public void RestartEnemy()

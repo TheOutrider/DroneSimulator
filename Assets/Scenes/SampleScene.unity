@@ -1198,7 +1198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gunAmmo: 100
-  fireballAmmo: 0
+  fireballAmmo: 5
   gunAmmoTextFP: {fileID: 1196162282}
   fireballAmmoFP: {fileID: 963059488}
   gunAmmoTextTP: {fileID: 789980843}
@@ -1207,9 +1207,16 @@ MonoBehaviour:
   fireballAmmoUI: {fileID: 1489782243}
   gunAmmoUIFP: {fileID: 1180009712}
   fireballAmmoUIFP: {fileID: 1127096012}
+  launchers: {fileID: 1298201171}
   droneAudioSource: {fileID: 474028103}
   turret: {fileID: 8300000, guid: 5d83680dcb0109242ae6f15566ca531b, type: 3}
   emptyGun: {fileID: 8300000, guid: de7f980f1d0b3864bb26b85933f8d619, type: 3}
+  flame: {fileID: 0}
+  turrets:
+  - {fileID: 1279808542}
+  - {fileID: 958173144}
+  bulletPrefab: {fileID: 2019565668066049164, guid: 47bd97bd6969a5e4692a0d22114299db, type: 3}
+  fireballPrefab: {fileID: 7274105307979644910, guid: 5ceded51f01442e44b021b4f8d6eb476, type: 3}
 --- !u!1 &526472917
 GameObject:
   m_ObjectHideFlags: 0
@@ -2179,7 +2186,7 @@ RectTransform:
   m_Father: {fileID: 1934420962}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.361, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3036,6 +3043,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 941919512}
   m_CullTransparentMesh: 1
+--- !u!1 &958173144 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7202911124631284528, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+  m_PrefabInstance: {fileID: 3097032852226234077}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &963059486
 GameObject:
   m_ObjectHideFlags: 0
@@ -4161,6 +4173,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1196162280}
   m_CullTransparentMesh: 1
+--- !u!1 &1279808542 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3203982021554407950, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+  m_PrefabInstance: {fileID: 3097032852226234077}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1283664148
 GameObject:
   m_ObjectHideFlags: 0
@@ -4192,6 +4209,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1760044519}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!1 &1298201171 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1031790551033168343, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+  m_PrefabInstance: {fileID: 3097032852226234077}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1348819201
 GameObject:
   m_ObjectHideFlags: 0
@@ -4327,7 +4349,7 @@ RectTransform:
   m_Father: {fileID: 1761676237}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.361, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -5620,7 +5642,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1788831580
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5797,7 +5819,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1807282539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6475,10 +6497,18 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1031790551033168343, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2256069517797456178, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
       propertyPath: blast
       value: 
       objectReference: {fileID: 8300000, guid: 8fe1894cf8ae2784ab32e0e52083249c, type: 3}
+    - target: {fileID: 2256069517797456178, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
+      propertyPath: launchers
+      value: 
+      objectReference: {fileID: 1298201171}
     - target: {fileID: 2256069517797456178, guid: 5d5aa331e163c504cb44e5f66bae9f6f, type: 3}
       propertyPath: m_Enabled
       value: 1
