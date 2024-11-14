@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,7 +35,6 @@ public class EnemyScript : MonoBehaviour
 
     void Update()
     {
-
         playerInAttackRange = IsObjectInRange();
 
         if (playerInAttackRange)
@@ -65,15 +65,19 @@ public class EnemyScript : MonoBehaviour
 
     public void Fire()
     {
-        fireRateTimer = 0;
-        audioSource.PlayOneShot(bulletSound);
-        foreach (var turret in turrets)
+        if (!isDead)
         {
-            if (!isDead)
+            fireRateTimer = 0;
+            audioSource.PlayOneShot(bulletSound);
+            foreach (var turret in turrets)
             {
-                GameObject bullet = Instantiate(bulletPrefab, turret.transform.position, turret.transform.rotation);
+                if (!isDead)
+                {
+                    GameObject bullet = Instantiate(bulletPrefab, turret.transform.position, turret.transform.rotation);
+                }
             }
         }
+
     }
 
     private void OnCollisionEnter(Collision other)
@@ -81,6 +85,10 @@ public class EnemyScript : MonoBehaviour
         if (other.gameObject.tag == "Bullet")
         {
             health -= 10;
+        }
+        else if (other.gameObject.tag == "Fireball")
+        {
+            health -= 50;
         }
     }
 
@@ -94,14 +102,8 @@ public class EnemyScript : MonoBehaviour
             {
                 parts.gameObject.SetActive(false);
             }
-            // MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
-            // if (meshRenderer != null)
-            // {
-            //     meshRenderer.enabled = false;
-            // }
             damageBlast.gameObject.SetActive(true);
             damageBlast.Play();
-            // MusicManager.Instance.PlayBlast();
             StartCoroutine(StopBlast());
         }
     }
@@ -112,6 +114,19 @@ public class EnemyScript : MonoBehaviour
         damageBlast.gameObject.SetActive(false);
         damageBlast.Stop();
         yield return new WaitForSeconds(1);
-        Destroy(gameObject);
+        gameObject.SetActive(false);
+    }
+
+    public void RestartEnemy()
+    {
+        health = 100f;
+        isDead = false;
+        foreach (GameObject parts in bodyParts)
+        {
+            parts.gameObject.SetActive(true);
+        }
+        damageBlast.gameObject.SetActive(false);
+
+        gameObject.SetActive(true);
     }
 }
