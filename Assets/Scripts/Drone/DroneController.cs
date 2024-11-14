@@ -14,10 +14,10 @@ public class DroneController : MonoBehaviour
     bulletFireRate = 0.075f, maxThrust = 200f, maxReachableHeight = 65;
 
     public float lift, roll, pitch, yaw, lastLiftValue, throttleIncrement = 0.1f, health = 200f, maxThrottle = 35f, throttle = 0.1f;
-    private bool isFiringBullet = false, isAccelerating = false, isDead = false;
+    private bool isFiringBullet = false, isAccelerating = false, isDead = false, isGunSelected = true;
 
     [Header("Prefabs & Particles")]
-    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private GameObject bulletPrefab, fireballPrefab;
     [SerializeField] private GameObject[] turrets;
     [SerializeField] private ParticleSystem[] thrusters, muzzleFlash;
     [SerializeField] private ParticleSystem damageBlast;
@@ -28,7 +28,9 @@ public class DroneController : MonoBehaviour
 
     public Transform respawnLocation;
 
-    public static event Action  OnGunAmmoAcquired, OnFireballAmmoAcquired, OnGunFired, OnFireballFired;
+    public static event Action OnGunAmmoAcquired, OnFireballAmmoAcquired, OnGunFired, OnFireballFired;
+    public delegate void OnWeaponChanged(bool selectedGun);
+    public static event OnWeaponChanged WeaponChanged;
 
 
     private void Awake()
@@ -43,8 +45,26 @@ public class DroneController : MonoBehaviour
     private void Update()
     {
         HandleInputs();
+        HandleWeapon();
         HandleTurret();
         HandleHealth();
+    }
+
+    private void HandleWeapon()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Debug.Log("IS GUN SELECTED : ");
+            isGunSelected = true;
+            WeaponChanged?.Invoke(isGunSelected);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Debug.Log("IS LAUNCHER SELECTED : ");
+            isGunSelected = false;
+            WeaponChanged?.Invoke(isGunSelected);
+        }
+
     }
 
     private void HandleTurret()
@@ -79,8 +99,8 @@ public class DroneController : MonoBehaviour
             foreach (var turret in turrets)
             {
                 OnGunFired?.Invoke();
-                 Debug.Log("GUN FIRED INVOKED");
-                GameObject bullet = Instantiate(bulletPrefab, turret.transform.position, turret.transform.rotation);
+                Debug.Log("GUN FIRED INVOKED");
+                GameObject bullet = Instantiate(isGunSelected ? bulletPrefab : fireballPrefab, turret.transform.position, turret.transform.rotation);
             }
             yield return new WaitForSeconds(bulletFireRate);
         }

@@ -28,7 +28,7 @@ public class GunAmmoScript : MonoBehaviour
         tempPosition.y += Mathf.Sin(Time.fixedTime * Mathf.PI * frequency) * amplitude;
         transform.position = tempPosition;
 
-        transform.Rotate(0f, rotateSpeed * Time.deltaTime, 0f, Space.Self);
+        transform.Rotate(0f, 0f, rotateSpeed * Time.deltaTime, Space.Self);
     }
 
     private void OnTriggerEnter(Collider other)

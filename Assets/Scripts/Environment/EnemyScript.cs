@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -82,6 +83,10 @@ public class EnemyScript : MonoBehaviour
         {
             health -= 10;
         }
+        else if (other.gameObject.tag == "Fireball")
+        {
+            health -= 50;
+        }
     }
 
     private void HandleHealth()
@@ -94,14 +99,8 @@ public class EnemyScript : MonoBehaviour
             {
                 parts.gameObject.SetActive(false);
             }
-            // MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
-            // if (meshRenderer != null)
-            // {
-            //     meshRenderer.enabled = false;
-            // }
             damageBlast.gameObject.SetActive(true);
             damageBlast.Play();
-            // MusicManager.Instance.PlayBlast();
             StartCoroutine(StopBlast());
         }
     }
@@ -112,6 +111,20 @@ public class EnemyScript : MonoBehaviour
         damageBlast.gameObject.SetActive(false);
         damageBlast.Stop();
         yield return new WaitForSeconds(1);
-        Destroy(gameObject);
+        gameObject.SetActive(false);
+        // Destroy(gameObject);
+    }
+
+    public void RestartEnemy()
+    {
+        health = 100f;
+        isDead = false;
+        foreach (GameObject parts in bodyParts)
+        {
+            parts.gameObject.SetActive(true);
+        }
+        damageBlast.gameObject.SetActive(false);
+
+        gameObject.SetActive(true);
     }
 }

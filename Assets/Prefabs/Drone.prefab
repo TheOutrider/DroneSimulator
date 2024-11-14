@@ -20488,7 +20488,7 @@ Transform:
   m_GameObject: {fileID: 8725757352335156398}
   serializedVersion: 2
   m_LocalRotation: {x: -0.00000003774895, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.9364014, y: 4.25, z: -0.46}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -20566,9 +20566,7 @@ MonoBehaviour:
   responsiveness: 100
   liftAmount: 100
   maxLift: 150
-  maxThrottle: 35
   bulletFireRate: 0.1
-  throttle: 0
   maxThrust: 200
   maxReachableHeight: 65
   lift: 0
@@ -20578,7 +20576,10 @@ MonoBehaviour:
   lastLiftValue: 0
   throttleIncrement: 0.1
   health: 200
+  maxThrottle: 35
+  throttle: 0
   bulletPrefab: {fileID: 2019565668066049164, guid: 47bd97bd6969a5e4692a0d22114299db, type: 3}
+  fireballPrefab: {fileID: 0}
   turrets:
   - {fileID: 3203982021554407950}
   - {fileID: 7202911124631284528}
@@ -20588,7 +20589,6 @@ MonoBehaviour:
   - {fileID: 4589527803498916742}
   damageBlast: {fileID: 4599102785687865516}
   droneAudioSource: {fileID: 5730367787436665786}
-  turret: {fileID: 8300000, guid: 5d83680dcb0109242ae6f15566ca531b, type: 3}
   blast: {fileID: 0}
   respawnLocation: {fileID: 0}
 --- !u!54 &-1979021658505898572

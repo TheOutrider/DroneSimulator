@@ -213,7 +213,7 @@ MonoBehaviour:
   health: 100
   amplitude: 0.5
   frequency: 1
-  sightRange: 30
+  sightRange: 100
   bulletFireRate: 1
   fireRate: 0.5
   fireRateTimer: 0
